@@ -1,15 +1,41 @@
+import { useCallback, useState } from 'react'
 import styled from 'styled-components/macro'
 
-export default function Product({ name, details, handleClick }) {
+export default function Product({
+  name,
+  details,
+  onHandleClick,
+  setCart,
+  product,
+  cart,
+}) {
+  const [position, setPosition] = useState({ left: 0, top: 0 })
+
+  const measuredRef = useCallback((node) => {
+    if (node !== null) {
+      setPosition({
+        left: node.getBoundingClientRect().left,
+        top: node.getBoundingClientRect().top,
+      })
+    }
+  }, [])
+  console.log(position)
   return (
     <ProductContainer>
       <div>
         <h2>{name}</h2>
         <p>{details}</p>
       </div>
-      <Button onClick={handleClick}>Add to Cart</Button>
+      <Button ref={measuredRef} onClick={() => handleClick()}>
+        Add to Cart
+      </Button>
     </ProductContainer>
   )
+
+  function handleClick() {
+    setCart([...cart, product])
+    onHandleClick(position)
+  }
 }
 
 const ProductContainer = styled.section`
