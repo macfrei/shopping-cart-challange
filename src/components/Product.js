@@ -1,36 +1,30 @@
+import { useRef, useState } from 'react'
 import styled from 'styled-components/macro'
 
 export default function Product({
   name,
   details,
   product,
-  onHandleClick,
-  buttonPosition,
+  handleClick,
+  addToCart,
+  spanPosition,
 }) {
+  const buttonRef = useRef(null)
+
   return (
     <ProductContainer>
       <div>
         <h2>{name}</h2>
         <p>{details}</p>
       </div>
-      <Button
-        position={buttonPosition && 'static'}
-        onClick={(event) => handleClick(event, product)}
-      >
+      <Button ref={buttonRef} onClick={() => handleClick(product, buttonRef)}>
         Add to Cart
-        {buttonPosition && (
-          <AnimatedSpan top={buttonPosition.top} left={buttonPosition.left} />
+        {addToCart && (
+          <AnimatedSpan top={spanPosition.top} left={spanPosition.left} />
         )}
       </Button>
     </ProductContainer>
   )
-
-  function handleClick(event, product) {
-    const top = event.target.offsetTop
-    const left = event.target.offsetLeft
-
-    onHandleClick(product, top, left)
-  }
 }
 
 const ProductContainer = styled.section`
@@ -41,11 +35,11 @@ const ProductContainer = styled.section`
 `
 
 const Button = styled.button`
-  position: ${(props) => props.position || 'relative'};
   padding: 16px;
   background-color: #badaba;
   border-radius: 8px;
   border: 1px solid black;
+  z-index: 1;
 `
 const AnimatedSpan = styled.span`
   position: absolute;
@@ -57,5 +51,4 @@ const AnimatedSpan = styled.span`
   height: 20px;
   border-radius: 50%;
   border: 1px solid black;
-  z-index: -10;
 `

@@ -2,47 +2,60 @@ import styled from 'styled-components/macro'
 import Header from './components/AppHeader'
 import Product from './components/Product'
 import products from './assets/products.json'
-import { useCallback, useLayoutEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 function App() {
   const [cart, setCart] = useState([])
-  const [position, setPosition] = useState({ left: 0, top: 0 })
-  const [buttonPosition, setButtonPosition] = useState('')
-  const [currentProduct, setCurrentProduct] = useState('')
+  const [cartPosition, setCartPosition] = useState({ left: 0, top: 0 })
+  const [spanPosition, setSpanPosition] = useState({
+    top: 0,
+    left: 0,
+  })
+  const [addToCart, setAddToCart] = useState(false)
+  const cartRef = useRef(null)
 
-  const measuredRef = useCallback((node) => {
-    if (node !== null) {
-      setPosition({
-        left: node.getBoundingClientRect().left,
-        top: node.getBoundingClientRect().top,
+  useEffect(() => {
+    if (cartRef) {
+      setCartPosition({
+        left: cartRef.current.getBoundingClientRect().left,
+        top: cartRef.current.getBoundingClientRect().top,
       })
     }
   }, [])
 
-  function onHandleClick(product, top, left) {
-    setButtonPosition({ top, left })
-    setCurrentProduct(product)
+  function onHandleClick(product, buttonRef) {
+    setSpanPosition({
+      left: buttonRef.current.getBoundingClientRect().left,
+      top: buttonRef.current.getBoundingClientRect().top,
+    })
+
+    setAddToCart(!addToCart)
+
+    setTimeout(() => {
+      updateCart(product)
+      setAddToCart(false)
+    }, 1500)
   }
 
   useLayoutEffect(() => {
-    if (buttonPosition) {
+    if (spanPosition) {
       setTimeout(() => {
-        setButtonPosition(position)
+        setSpanPosition({
+          left: cartPosition.left,
+          top: cartPosition.top,
+        })
       }, 1000)
-      setTimeout(() => {
-        updateCart(currentProduct)
-      }, 1500)
     }
-    //setButtonPosition('')
-  }, [buttonPosition])
+  }, [spanPosition])
 
   function updateCart(product) {
     setCart([...cart, product])
   }
+
   return (
     <AppGrid>
       <Header>
-        Shopping Cart <Cart ref={measuredRef}>{cart.length}</Cart>
+        Shopping Cart <Cart ref={cartRef}>{cart.length}</Cart>
       </Header>
       <Main>
         {products.map((product, index) => (
@@ -50,13 +63,10 @@ function App() {
             key={index}
             name={product.name}
             details={product.details}
-            position={position}
-            onHandleClick={onHandleClick}
-            cart={cart}
-            setCard={setCart}
+            handleClick={onHandleClick}
             product={product}
-            setPosition={setPosition}
-            buttonPosition={buttonPosition}
+            spanPosition={spanPosition}
+            addToCart={addToCart}
           />
         ))}
       </Main>
@@ -80,4 +90,5 @@ const Cart = styled.span`
   width: 20px;
   height: 20px;
   background-color: #badaba;
+  z-index: 1;
 `
