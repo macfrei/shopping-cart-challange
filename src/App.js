@@ -21,7 +21,7 @@ function App() {
         top: cartRef.current.getBoundingClientRect().top,
       })
     }
-  }, [])
+  }, [spanPosition])
 
   function onHandleClick(product, buttonRef) {
     setSpanPosition({
