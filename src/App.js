@@ -2,11 +2,13 @@ import styled from 'styled-components/macro'
 import Header from './components/AppHeader'
 import Product from './components/Product'
 import products from './assets/products.json'
-import { useCallback, useState } from 'react'
+import { useCallback, useLayoutEffect, useState } from 'react'
 
 function App() {
   const [cart, setCart] = useState([])
   const [position, setPosition] = useState({ left: 0, top: 0 })
+  const [buttonPosition, setButtonPosition] = useState('')
+  const [currentProduct, setCurrentProduct] = useState('')
 
   const measuredRef = useCallback((node) => {
     if (node !== null) {
@@ -17,10 +19,26 @@ function App() {
     }
   }, [])
 
-  function onHandleClick(position) {
-    setPosition(position)
+  function onHandleClick(product, top, left) {
+    setButtonPosition({ top, left })
+    setCurrentProduct(product)
   }
 
+  useLayoutEffect(() => {
+    if (buttonPosition) {
+      setTimeout(() => {
+        setButtonPosition(position)
+      }, 1000)
+      setTimeout(() => {
+        updateCart(currentProduct)
+      }, 1500)
+    }
+    //setButtonPosition('')
+  }, [buttonPosition])
+
+  function updateCart(product) {
+    setCart([...cart, product])
+  }
   return (
     <AppGrid>
       <Header>
@@ -32,13 +50,15 @@ function App() {
             key={index}
             name={product.name}
             details={product.details}
+            position={position}
             onHandleClick={onHandleClick}
-            setCart={setCart}
-            product={product}
             cart={cart}
+            setCard={setCart}
+            product={product}
+            setPosition={setPosition}
+            buttonPosition={buttonPosition}
           />
         ))}
-        <AnimatedSpan top={position.top} left={position.left} />
       </Main>
     </AppGrid>
   )
@@ -60,16 +80,4 @@ const Cart = styled.span`
   width: 20px;
   height: 20px;
   background-color: #badaba;
-`
-
-const AnimatedSpan = styled.span`
-  position: absolute;
-  top: ${(props) => props.top}px;
-  left: ${(props) => props.left}px;
-  transition: top 0.6s, left 0.6s;
-  background-color: transparent;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 1px solid black;
 `
