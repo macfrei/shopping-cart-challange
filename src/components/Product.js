@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import styled from 'styled-components/macro'
 
 export default function Product({
@@ -17,7 +17,11 @@ export default function Product({
         <h2>{name}</h2>
         <p>{details}</p>
       </div>
-      <Button ref={buttonRef} onClick={() => handleClick(product, buttonRef)}>
+      <Button
+        ref={buttonRef}
+        disabled={addToCart}
+        onClick={() => handleClick(product, buttonRef)}
+      >
         Add to Cart
         {addToCart && (
           <AnimatedSpan top={spanPosition.top} left={spanPosition.left} />
@@ -39,7 +43,6 @@ const Button = styled.button`
   background-color: #badaba;
   border-radius: 8px;
   border: 1px solid black;
-  z-index: 1;
 `
 const AnimatedSpan = styled.span`
   position: absolute;
@@ -50,5 +53,4 @@ const AnimatedSpan = styled.span`
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  border: 1px solid black;
 `

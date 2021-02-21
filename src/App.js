@@ -7,10 +7,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 function App() {
   const [cart, setCart] = useState([])
   const [cartPosition, setCartPosition] = useState({ left: 0, top: 0 })
-  const [spanPosition, setSpanPosition] = useState({
-    top: 0,
-    left: 0,
-  })
+  const [spanPosition, setSpanPosition] = useState({ top: 0, left: 0 })
   const [addToCart, setAddToCart] = useState(false)
   const cartRef = useRef(null)
 
@@ -25,8 +22,8 @@ function App() {
 
   function onHandleClick(product, buttonRef) {
     setSpanPosition({
-      left: buttonRef.current.getBoundingClientRect().left,
-      top: buttonRef.current.getBoundingClientRect().top,
+      left: buttonRef.current.getBoundingClientRect().left + 2,
+      top: buttonRef.current.getBoundingClientRect().top + 2,
     })
 
     setAddToCart(!addToCart)
@@ -34,7 +31,7 @@ function App() {
     setTimeout(() => {
       updateCart(product)
       setAddToCart(false)
-    }, 1500)
+    }, 1100)
   }
 
   useLayoutEffect(() => {
@@ -87,8 +84,10 @@ const Main = styled.main`
 `
 const Cart = styled.span`
   text-align: center;
-  width: 20px;
-  height: 20px;
+  margin-left: 5px;
+  border-radius: 4px;
+  padding: 4px;
   background-color: #badaba;
-  z-index: 1;
+  z-index: 10;
+  min-width: 20px;
 `
